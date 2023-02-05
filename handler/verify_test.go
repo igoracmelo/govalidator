@@ -62,6 +62,58 @@ func TestEmptyRules(t *testing.T) {
 	})
 }
 
+func TestAllRules(t *testing.T) {
+	t.Run("should fail all rules", func(t *testing.T) {
+		res := setupVerify(strings.NewReader(`{
+			"password": "Ab1233",
+			"rules": [
+				{ "rule": "minSize", "value": 7 },
+				{ "rule": "minUppercase", "value": 2 },
+				{ "rule": "minLowercase", "value": 3 },
+				{ "rule": "minDigit", "value": 5 },
+				{ "rule": "minSpecialChars", "value": 1 },
+				{ "rule": "noRepeted" }
+			]
+		}`))
+		defer res.Body.Close()
+		assert.StatusCode(t, res.StatusCode, http.StatusOK)
+
+		data, err := io.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		msg := string(data)
+		assert.StringContains(t, msg, `"verify":false`)
+		assert.StringContains(t, msg, `minSize`)
+		assert.StringContains(t, msg, `minUppercase`)
+		assert.StringContains(t, msg, `minLowercase`)
+		assert.StringContains(t, msg, `minDigit`)
+		assert.StringContains(t, msg, `minSpecialChars`)
+		assert.StringContains(t, msg, `noRepeted`)
+	})
+
+	t.Run("should pass all rules", func(t *testing.T) {
+		res := setupVerify(strings.NewReader(`{
+			"password": "AbabB12345@",
+			"rules": [
+				{ "rule": "minSize", "value": 11 },
+				{ "rule": "minUppercase", "value": 2 },
+				{ "rule": "minLowercase", "value": 3 },
+				{ "rule": "minDigit", "value": 5 },
+				{ "rule": "minSpecialChars", "value": 1 },
+				{ "rule": "noRepeted" }
+			]
+		}`))
+		defer res.Body.Close()
+		assert.StatusCode(t, res.StatusCode, http.StatusOK)
+
+		data, err := io.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		msg := string(data)
+		assert.StringContains(t, msg, `{"verify":true,"noMatch":[]}`)
+	})
+}
+
 func TestMinSize(t *testing.T) {
 	t.Run("size less than minSize should not verify", func(t *testing.T) {
 		res := setupVerify(strings.NewReader(`{
