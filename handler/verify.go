@@ -50,7 +50,7 @@ func HandleVerify(w http.ResponseWriter, r *http.Request) {
 		validate, ok := PasswordValidators[rule.Rule]
 
 		if !ok {
-			http.Error(w, fmt.Sprintf("Unkown rule '%s'", rule.Rule), http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("Unknown rule '%s'", rule.Rule), http.StatusBadRequest)
 			return
 		}
 

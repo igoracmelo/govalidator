@@ -133,3 +133,23 @@ func TestMinSize(t *testing.T) {
 		assert.StringContains(t, msg, `{"verify":false,"noMatch":["minSize"]}`)
 	})
 }
+
+func TestInvalidRule(t *testing.T) {
+	t.Run("invalid rule should return bad request", func(t *testing.T) {
+		res := setupVerify(strings.NewReader(`{
+			"password": "abc123#",
+			"rules": [{
+				"rule": "invalid rule",
+				"value": 4
+			}]
+		}`))
+		defer res.Body.Close()
+		assert.StatusCode(t, res.StatusCode, http.StatusBadRequest)
+
+		data, err := io.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		msg := string(data)
+		assert.StringContains(t, msg, "Unknown rule")
+	})
+}
