@@ -2,10 +2,16 @@ package main
 
 import (
 	"estudiosol/handler"
+	"fmt"
 	"net/http"
+	"os"
 )
 
 func main() {
 	http.HandleFunc("/verify", handler.HandleVerify)
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to listen and serve: %s", err.Error())
+		os.Exit(1)
+	}
 }
