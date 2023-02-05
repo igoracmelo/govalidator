@@ -115,7 +115,7 @@ func TestAllRules(t *testing.T) {
 }
 
 func TestMinSize(t *testing.T) {
-	t.Run("size less than minSize should not verify", func(t *testing.T) {
+	t.Run("size less than minSize should not be accepted", func(t *testing.T) {
 		res := setupVerify(strings.NewReader(`{
 			"password": "123",
 			"rules": [{
