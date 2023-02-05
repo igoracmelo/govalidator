@@ -8,21 +8,21 @@ import (
 	"unicode"
 )
 
-type VerifyRequest struct {
-	Password string `json:"password"`
-	Rules    []struct {
-		Rule  string `json:"rule"`
-		Value int    `json:"value"`
-	}
-}
-
-type VerifyResponse struct {
-	Verify  bool     `json:"verify"`
-	NoMatch []string `json:"noMatch"`
-}
-
 func HandleVerify(w http.ResponseWriter, r *http.Request) {
-	var body VerifyRequest
+	type request struct {
+		Password string `json:"password"`
+		Rules    []struct {
+			Rule  string `json:"rule"`
+			Value int    `json:"value"`
+		}
+	}
+
+	type response struct {
+		Verify  bool     `json:"verify"`
+		NoMatch []string `json:"noMatch"`
+	}
+
+	var body request
 	err := json.NewDecoder(r.Body).Decode(&body)
 
 	if err != nil {
@@ -41,7 +41,7 @@ func HandleVerify(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	res := VerifyResponse{
+	res := response{
 		Verify:  true,
 		NoMatch: []string{},
 	}
