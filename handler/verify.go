@@ -119,7 +119,7 @@ var PasswordValidators = map[string]PasswordValidator{
 	// ferramentas de testes automatizados que se baseiem no nome que está no PDF
 	"noRepeted": func(pass string, _ int) bool {
 		runes := []rune(pass)
-		for i := range runes[1:] {
+		for i := 1; i < len(runes); i++ {
 			if runes[i] == runes[i-1] {
 				return false
 			}
