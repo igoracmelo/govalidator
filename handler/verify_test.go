@@ -67,6 +67,49 @@ func TestEmptyRules(t *testing.T) {
 	})
 }
 
+func TestInvalidRule(t *testing.T) {
+	t.Run("invalid rule should return bad request", func(t *testing.T) {
+		res := setupVerify(strings.NewReader(`{
+			"password": "abc123#",
+			"rules": [{
+				"rule": "invalid rule",
+				"value": 4
+			}]
+		}`))
+		defer res.Body.Close()
+		assert.StatusCode(t, res.StatusCode, http.StatusBadRequest)
+
+		data, err := io.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		msg := string(data)
+		assert.StringContains(t, msg, "Unknown rule")
+	})
+}
+
+// testando uma única regra para garantir o comportamento correto
+func TestMinSize(t *testing.T) {
+	t.Run("size less than minSize should not be accepted", func(t *testing.T) {
+		res := setupVerify(strings.NewReader(`{
+			"password": "123",
+			"rules": [{
+				"rule": "minSize",
+				"value": 4
+			}]
+		}`))
+		defer res.Body.Close()
+		assert.StatusCode(t, res.StatusCode, http.StatusOK)
+
+		data, err := io.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		msg := string(data)
+		assert.StringContains(t, msg, `{"verify":false,"noMatch":["minSize"]}`)
+	})
+}
+
+// conjunto de testes utilizando todas as regras de senha ao mesmo tempo para
+// aumentar a cobertura de testes e validar cenários mais complexos
 func TestAllRules(t *testing.T) {
 	t.Run("should fail all rules", func(t *testing.T) {
 		res := setupVerify(strings.NewReader(`{
@@ -117,16 +160,18 @@ func TestAllRules(t *testing.T) {
 		msg := string(data)
 		assert.StringContains(t, msg, `{"verify":true,"noMatch":[]}`)
 	})
-}
 
-func TestMinSize(t *testing.T) {
-	t.Run("size less than minSize should not be accepted", func(t *testing.T) {
+	t.Run("should fail some rules", func(t *testing.T) {
 		res := setupVerify(strings.NewReader(`{
-			"password": "123",
-			"rules": [{
-				"rule": "minSize",
-				"value": 4
-			}]
+			"password": "AbabB12345@@",
+			"rules": [
+				{ "rule": "minSize",         "value": 11 },
+				{ "rule": "minUppercase",    "value": 3 },
+				{ "rule": "minLowercase",    "value": 3 },
+				{ "rule": "minDigit",        "value": 6 },
+				{ "rule": "minSpecialChars", "value": 2 },
+				{ "rule": "noRepeted" }
+			]
 		}`))
 		defer res.Body.Close()
 		assert.StatusCode(t, res.StatusCode, http.StatusOK)
@@ -135,26 +180,9 @@ func TestMinSize(t *testing.T) {
 		assert.NoError(t, err)
 
 		msg := string(data)
-		assert.StringContains(t, msg, `{"verify":false,"noMatch":["minSize"]}`)
-	})
-}
-
-func TestInvalidRule(t *testing.T) {
-	t.Run("invalid rule should return bad request", func(t *testing.T) {
-		res := setupVerify(strings.NewReader(`{
-			"password": "abc123#",
-			"rules": [{
-				"rule": "invalid rule",
-				"value": 4
-			}]
-		}`))
-		defer res.Body.Close()
-		assert.StatusCode(t, res.StatusCode, http.StatusBadRequest)
-
-		data, err := io.ReadAll(res.Body)
-		assert.NoError(t, err)
-
-		msg := string(data)
-		assert.StringContains(t, msg, "Unknown rule")
+		assert.StringContains(t, msg, `"verify":false`)
+		assert.StringContains(t, msg, `minUppercase`)
+		assert.StringContains(t, msg, `minDigit`)
+		assert.StringContains(t, msg, `noRepeted`)
 	})
 }
