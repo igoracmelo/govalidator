@@ -16,7 +16,7 @@ go build -o app main.go
 
 ### Teste automatizado
 ```sh
-go test ./...
+go test -v ./...
 ```
 
 ### Teste manual
@@ -33,7 +33,7 @@ docker run --rm -p 8080:8080 validator:1.0.0
 
 ### Teste automatizado
 ```sh
-docker run --rm -it validator:1.0.0 go test ./...
+docker run --rm -it validator:1.0.0 go test -v ./...
 ```
 
 ### Teste manual
