@@ -25,6 +25,11 @@ func HandleVerify(w http.ResponseWriter, r *http.Request) {
 		NoMatch []string `json:"noMatch"`
 	}
 
+	if r.Method != "POST" {
+		http.NotFound(w, r)
+		return
+	}
+
 	var body request
 	err := json.NewDecoder(r.Body).Decode(&body)
 
