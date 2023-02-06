@@ -68,10 +68,10 @@ func TestAllRules(t *testing.T) {
 		res := setupVerify(strings.NewReader(`{
 			"password": "Ab1233",
 			"rules": [
-				{ "rule": "minSize", "value": 7 },
-				{ "rule": "minUppercase", "value": 2 },
-				{ "rule": "minLowercase", "value": 3 },
-				{ "rule": "minDigit", "value": 5 },
+				{ "rule": "minSize",         "value": 7 },
+				{ "rule": "minUppercase",    "value": 2 },
+				{ "rule": "minLowercase",    "value": 3 },
+				{ "rule": "minDigit",        "value": 5 },
 				{ "rule": "minSpecialChars", "value": 1 },
 				{ "rule": "noRepeted" }
 			]
@@ -96,10 +96,10 @@ func TestAllRules(t *testing.T) {
 		res := setupVerify(strings.NewReader(`{
 			"password": "AbabB12345@",
 			"rules": [
-				{ "rule": "minSize", "value": 11 },
-				{ "rule": "minUppercase", "value": 2 },
-				{ "rule": "minLowercase", "value": 3 },
-				{ "rule": "minDigit", "value": 5 },
+				{ "rule": "minSize",         "value": 11 },
+				{ "rule": "minUppercase",    "value": 2 },
+				{ "rule": "minLowercase",    "value": 3 },
+				{ "rule": "minDigit",        "value": 5 },
 				{ "rule": "minSpecialChars", "value": 1 },
 				{ "rule": "noRepeted" }
 			]
