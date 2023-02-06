@@ -10,6 +10,7 @@ import (
 	"testing"
 )
 
+// função para reduzir boilerplate nos testes de integração
 func setupVerify(body io.Reader) (res *http.Response) {
 	req := httptest.NewRequest("POST", "/verify", body)
 	w := httptest.NewRecorder()

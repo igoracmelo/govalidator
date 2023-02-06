@@ -1,3 +1,5 @@
+// Conjunto de ferramentas para evitar boilerplates que reduzem a legibilidade do teste
+
 package assert
 
 import (
@@ -22,4 +24,3 @@ func StatusCode(t *testing.T, got int, want int) {
 		t.Fatalf("assetion failed: expected status code '%d', but got '%d'", want, got)
 	}
 }
-

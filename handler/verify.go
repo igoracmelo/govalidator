@@ -9,6 +9,9 @@ import (
 )
 
 func HandleVerify(w http.ResponseWriter, r *http.Request) {
+	// me baseei nesse artigo que não recomenda definir tipos globais para request / response
+	// https://pace.dev/blog/2018/05/09/how-I-write-http-services-after-eight-years.html
+
 	type request struct {
 		Password string `json:"password"`
 		Rules    []struct {
@@ -54,6 +57,8 @@ func HandleVerify(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// caso alguma regra falhe na validação, ela é adicionada ao slice de NoMatch
+		// e o Verify passa a ser falso
 		if !validate(body.Password, rule.Value) {
 			res.Verify = false
 			res.NoMatch = append(res.NoMatch, rule.Rule)
@@ -67,8 +72,12 @@ func HandleVerify(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// PasswordValidator é uma função que recebe uma string que representa a senha
+// e um inteiro que representa o "x" da validação e retorna true se a validação
+// passar ou false se a validação falhar
 type PasswordValidator func(string, int) bool
 
+// map onde cada chave é o nome da validação e o valor uma função validadora
 var PasswordValidators = map[string]PasswordValidator{
 	"minSize": func(pass string, x int) bool {
 		return len(pass) >= x
