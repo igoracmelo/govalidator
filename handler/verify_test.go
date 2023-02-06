@@ -13,12 +13,12 @@ import (
 // função para reduzir boilerplate nos testes de integração
 // ela recebe um Reader que é a stream do body cria um request, um response writer,
 // os passa para o meu handler e retorna só o objeto de response
-func setupVerify(body io.Reader) (res *http.Response) {
+func setupVerify(body io.Reader) *http.Response {
 	req := httptest.NewRequest("POST", "/verify", body)
 	w := httptest.NewRecorder()
 	handler.HandleVerify(w, req)
-	res = w.Result()
-	return
+	res := w.Result()
+	return res
 }
 
 // sei que foi dito que a entrada vai ser sempre válida, mas acho importante tratar
