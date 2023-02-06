@@ -85,7 +85,7 @@ type PasswordValidator func(string, int) bool
 // map onde cada chave é o nome da validação e o valor uma função validadora
 var PasswordValidators = map[string]PasswordValidator{
 	"minSize": func(pass string, x int) bool {
-		return len(pass) >= x
+		return len([]rune(pass)) >= x
 	},
 
 	"minUppercase": func(pass string, x int) bool {

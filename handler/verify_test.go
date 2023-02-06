@@ -186,3 +186,23 @@ func TestAllRules(t *testing.T) {
 		assert.StringContains(t, msg, `noRepeted`)
 	})
 }
+
+// testando caracteres especiais
+func TestSpecialUnicodeCharacters(t *testing.T) {
+	t.Run("should fail minSize because emoji ocupies a single size unit", func(t *testing.T) {
+		res := setupVerify(strings.NewReader(`{
+			"password": "😱",
+			"rules": [
+				{ "rule": "minSize", "value": 2 }
+			]
+		}`))
+		defer res.Body.Close()
+		assert.StatusCode(t, res.StatusCode, http.StatusOK)
+
+		data, err := io.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		msg := string(data)
+		assert.StringContains(t, msg, `"verify":false`)
+		assert.StringContains(t, msg, "minSize")
+	})
