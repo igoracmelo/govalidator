@@ -206,3 +206,23 @@ func TestSpecialUnicodeCharacters(t *testing.T) {
 		assert.StringContains(t, msg, `"verify":false`)
 		assert.StringContains(t, msg, "minSize")
 	})
+
+	t.Run("should recognize uppercase and lowercase special chars", func(t *testing.T) {
+		res := setupVerify(strings.NewReader(`{
+			"password": "Áçãö",
+			"rules": [
+				{ "rule": "minSize", "value": 4 },
+				{ "rule": "minUppercase", "value": 1 },
+				{ "rule": "minLowercase", "value": 3 }
+			]
+		}`))
+		defer res.Body.Close()
+		assert.StatusCode(t, res.StatusCode, http.StatusOK)
+
+		data, err := io.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		msg := string(data)
+		assert.StringContains(t, msg, `"verify":true`)
+	})
+}
