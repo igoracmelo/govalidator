@@ -11,6 +11,8 @@ import (
 )
 
 // função para reduzir boilerplate nos testes de integração
+// ela recebe um Reader que é a stream do body cria um request, um response writer,
+// os passa para o meu handler e retorna só o objeto de response
 func setupVerify(body io.Reader) (res *http.Response) {
 	req := httptest.NewRequest("POST", "/verify", body)
 	w := httptest.NewRecorder()
@@ -19,6 +21,8 @@ func setupVerify(body io.Reader) (res *http.Response) {
 	return
 }
 
+// sei que foi dito que a entrada vai ser sempre válida, mas acho importante tratar
+// erros, principalmente coisas que derrubam o servidor como um nil pointer dereference
 func TestInvalidRequestBody(t *testing.T) {
 	t.Run("nil body should return bad request", func(t *testing.T) {
 		res := setupVerify(nil)
