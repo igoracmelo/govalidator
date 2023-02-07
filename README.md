@@ -37,7 +37,7 @@ Deve retornar `{"verify":true,"noMatch":[]}`
 
 ## Rodando a aplicação conteinerizada
 ```sh
-docker build --tag validator:1.0.0
+docker build --tag validator:1.0.0 .
 docker run --rm -p 8080:8080 validator:1.0.0
 ```
 
